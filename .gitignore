@@ -1,0 +1,29 @@
+# Secrets and environment
+.env
+.env.local
+.env.*.local
+credentials.json
+
+# Go build artifacts
+*.exe
+*.exe~
+__debug_bin*
+*.out
+*.test
+
+# Logs and runtime output
+*.log
+server_log.txt
+
+# Frontend
+node_modules/
+dist/
+.vite/
+
+# OS / editor
+.DS_Store
+Thumbs.db
+.vscode/settings.json
+
+# Claude Code
+.claude/

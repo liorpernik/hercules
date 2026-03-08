@@ -1,0 +1,37 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Launch Backend",
+            "type": "go",
+            "request": "launch",
+            "mode": "auto",
+            "program": "${workspaceFolder}/backend/cmd/api/main.go",
+            "cwd": "${workspaceFolder}/backend",
+            "env": {
+                "DATABASE_URL": "host=localhost user=postgres password=password dbname=hercules port=5432 sslmode=disable"
+            }
+        },
+        {
+            "name": "Launch Frontend",
+            "type": "node",
+            "request": "launch",
+            "runtimeExecutable": "npm",
+            "runtimeArgs": [
+                "run",
+                "dev"
+            ],
+            "cwd": "${workspaceFolder}/frontend",
+            "console": "integratedTerminal"
+        }
+    ],
+    "compounds": [
+        {
+            "name": "Hercules Full Stack",
+            "configurations": [
+                "Launch Backend",
+                "Launch Frontend"
+            ]
+        }
+    ]
+}
