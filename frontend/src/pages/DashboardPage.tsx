@@ -16,6 +16,7 @@ export default function Dashboard() {
     const [isEditing, setIsEditing] = useState(false);
     const [editForm, setEditForm] = useState<Partial<Case>>({});
     const [isAddModalOpen, setIsAddModalOpen] = useState(false);
+    const [statusFilter, setStatusFilter] = useState<'active' | 'closed'>('active');
     const [newCaseForm, setNewCaseForm] = useState({
         title: '',
         status: 'new',
@@ -146,8 +147,13 @@ export default function Dashboard() {
         } else if (filter === 'user' && selectedUserId) {
             filtered = cases.filter(c => c.assigned_user_id === selectedUserId);
         }
+        if (statusFilter === 'active') {
+            filtered = filtered.filter(c => c.status !== 'closed');
+        } else {
+            filtered = filtered.filter(c => c.status === 'closed');
+        }
         return [...filtered].sort((a, b) => b.priorityScore - a.priorityScore);
-    }, [cases, filter, currentUser, selectedUserId]);
+    }, [cases, filter, currentUser, selectedUserId, statusFilter]);
 
     if (loading) {
         return <div className="p-8 text-center text-slate-500">Loading cases...</div>;
@@ -260,6 +266,20 @@ export default function Dashboard() {
 
                         <div className="glass border border-white/20 rounded-lg p-1 flex">
                             <button
+                                onClick={() => setStatusFilter('active')}
+                                className={`px-4 py-1.5 rounded-md text-sm font-medium transition-colors ${statusFilter === 'active' ? 'bg-emerald-500/20 text-emerald-700 dark:text-emerald-300' : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'}`}
+                            >
+                                Active
+                            </button>
+                            <button
+                                onClick={() => setStatusFilter('closed')}
+                                className={`px-4 py-1.5 rounded-md text-sm font-medium transition-colors ${statusFilter === 'closed' ? 'bg-slate-400/20 text-slate-700 dark:text-slate-300' : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'}`}
+                            >
+                                Closed
+                            </button>
+                        </div>
+                        <div className="glass border border-white/20 rounded-lg p-1 flex">
+                            <button
                                 onClick={() => setFilter('all')}
                                 className={`px-4 py-1.5 rounded-md text-sm font-medium transition-colors ${filter === 'all' ? 'bg-primary/20 text-indigo-700 dark:text-indigo-300' : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
                                     }`}
@@ -311,36 +331,58 @@ export default function Dashboard() {
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6 relative z-10">
                     {/* New Cases Column */}
-                    <section className="glass-card rounded-xl p-6">
-                        <h2 className="text-xl font-semibold mb-4 text-indigo-600 dark:text-indigo-400 flex items-center">
-                            <span className="w-3 h-3 bg-indigo-500 rounded-full mr-2 shadow-[0_0_10px_rgba(99,102,241,0.5)]"></span>
-                            New Cases
-                        </h2>
-                        <div className="space-y-4">
-                            {sortedCases.filter(c => c.status === 'new').map(c => (
-                                <CaseCard key={c.id} c={c} onClick={() => setSelectedCase(c)} />
-                            ))}
-                            {sortedCases.filter(c => c.status === 'new').length === 0 && (
-                                <p className="text-slate-400 text-sm italic">No new cases found.</p>
-                            )}
-                        </div>
-                    </section>
+                    {statusFilter === 'active' && (
+                        <section className="glass-card rounded-xl p-6">
+                            <h2 className="text-xl font-semibold mb-4 text-indigo-600 dark:text-indigo-400 flex items-center">
+                                <span className="w-3 h-3 bg-indigo-500 rounded-full mr-2 shadow-[0_0_10px_rgba(99,102,241,0.5)]"></span>
+                                New Cases
+                            </h2>
+                            <div className="space-y-4">
+                                {sortedCases.filter(c => c.status === 'new').map(c => (
+                                    <CaseCard key={c.id} c={c} onClick={() => setSelectedCase(c)} />
+                                ))}
+                                {sortedCases.filter(c => c.status === 'new').length === 0 && (
+                                    <p className="text-slate-400 text-sm italic">No new cases found.</p>
+                                )}
+                            </div>
+                        </section>
+                    )}
 
                     {/* Ongoing Cases Column */}
-                    <section className="glass-card rounded-xl p-6">
-                        <h2 className="text-xl font-semibold mb-4 text-emerald-600 dark:text-emerald-400 flex items-center">
-                            <span className="w-3 h-3 bg-emerald-500 rounded-full mr-2 shadow-[0_0_10px_rgba(16,185,129,0.5)]"></span>
-                            Ongoing Cases
-                        </h2>
-                        <div className="space-y-4">
-                            {sortedCases.filter(c => c.status === 'ongoing').map(c => (
-                                <CaseCard key={c.id} c={c} onClick={() => setSelectedCase(c)} />
-                            ))}
-                            {sortedCases.filter(c => c.status === 'ongoing').length === 0 && (
-                                <p className="text-slate-400 text-sm italic">No ongoing cases found.</p>
-                            )}
-                        </div>
-                    </section>
+                    {statusFilter === 'active' && (
+                        <section className="glass-card rounded-xl p-6">
+                            <h2 className="text-xl font-semibold mb-4 text-emerald-600 dark:text-emerald-400 flex items-center">
+                                <span className="w-3 h-3 bg-emerald-500 rounded-full mr-2 shadow-[0_0_10px_rgba(16,185,129,0.5)]"></span>
+                                Ongoing Cases
+                            </h2>
+                            <div className="space-y-4">
+                                {sortedCases.filter(c => c.status === 'ongoing').map(c => (
+                                    <CaseCard key={c.id} c={c} onClick={() => setSelectedCase(c)} />
+                                ))}
+                                {sortedCases.filter(c => c.status === 'ongoing').length === 0 && (
+                                    <p className="text-slate-400 text-sm italic">No ongoing cases found.</p>
+                                )}
+                            </div>
+                        </section>
+                    )}
+
+                    {/* Closed Cases Column */}
+                    {statusFilter === 'closed' && (
+                        <section className="glass-card rounded-xl p-6 md:col-span-2">
+                            <h2 className="text-xl font-semibold mb-4 text-slate-500 dark:text-slate-400 flex items-center">
+                                <span className="w-3 h-3 bg-slate-400 rounded-full mr-2 shadow-[0_0_10px_rgba(148,163,184,0.5)]"></span>
+                                Closed Cases
+                            </h2>
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                {sortedCases.map(c => (
+                                    <CaseCard key={c.id} c={c} onClick={() => setSelectedCase(c)} />
+                                ))}
+                                {sortedCases.length === 0 && (
+                                    <p className="text-slate-400 text-sm italic">No closed cases found.</p>
+                                )}
+                            </div>
+                        </section>
+                    )}
                 </div>
 
                 {/* Add Case Modal */}
