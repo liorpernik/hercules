@@ -6,10 +6,14 @@ import (
 	"flag"
 	"log"
 
-	"github.com/google/uuid"
+	"github.com/joho/godotenv"
 )
 
 func main() {
+	if err := godotenv.Load(); err != nil {
+		log.Println("Warning: No .env file found")
+	}
+
 	db, err := database.NewPostgresConnection()
 	if err != nil {
 		log.Fatal(err)
@@ -73,50 +77,6 @@ func main() {
 		}
 	} else {
 		log.Printf("User %s already exists.", user.Email)
-	}
-
-	// 3. Seed sample cases
-	cases := []model.Case{
-		{
-			BaseModel: model.BaseModel{ID: uuid.New()},
-			AccountID: account.ID,
-			Title:     "State vs. Freeman",
-			Status:    "new",
-			Source:    "manual",
-			ExtData:   map[string]interface{}{},
-		},
-		{
-			BaseModel: model.BaseModel{ID: uuid.New()},
-			AccountID: account.ID,
-			Title:     "Tech Corp Merger",
-			Status:    "ongoing",
-			Source:    "manual",
-			ExtData:   map[string]interface{}{},
-		},
-		{
-			BaseModel: model.BaseModel{ID: uuid.New()},
-			AccountID: account.ID,
-			Title:     "Doe Estate Planning",
-			Status:    "new",
-			Source:    "manual",
-			ExtData:   map[string]interface{}{},
-		},
-		{
-			BaseModel: model.BaseModel{ID: uuid.New()},
-			AccountID: account.ID,
-			Title:     "Smith Divorce",
-			Status:    "ongoing",
-			Source:    "manual",
-			ExtData:   map[string]interface{}{},
-		},
-	}
-
-	for _, c := range cases {
-		if err := db.Create(&c).Error; err != nil {
-			log.Printf("Failed to create case %s: %v", c.Title, err)
-		} else {
-			log.Printf("Created case: %s", c.Title)
-		}
 	}
 
 	log.Println("Seeding complete!")

@@ -6,6 +6,8 @@ import (
 	"log"
 )
 
+// Utility to permanently purge test or demo organizations and their associated records
+// (cases, users, account) from the database.
 func main() {
 	db, err := database.NewPostgresConnection()
 	if err != nil {
@@ -14,8 +16,8 @@ func main() {
 
 	log.Println("Cleaning up mock data...")
 
-	// Delete known mock accounts hard
-	mockNames := []string{"Pernik Law", "Hercules Demo Firm"}
+	// Target only designated demo/test firm accounts for cleanup
+	mockNames := []string{"Hercules Demo Firm"}
 
 	// 1. Find the accounts
 	var accounts []model.Account

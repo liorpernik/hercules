@@ -43,10 +43,7 @@ func (r *PostgresRepository) GetUserByID(id string) (*model.User, error) {
 
 func (r *PostgresRepository) GetAccountByDomain(domain string) (*model.Account, error) {
 	var account model.Account
-	// Check by Domain field, but also check Name for current "Pernik Law" setup if domain isn't set yet.
-	// In a real usage we should rely on Domain, but for transition we check both or map them.
-	// Let's assume strict domain matching OR the user has manually set domains.
-	// For "Pernik Law", we can assume the domain is "perniklaw.com".
+	// Match by domain if set; fall back to a fuzzy name match for accounts without a domain yet.
 
 	result := r.db.Where("domain = ? OR (domain = '' AND name ILIKE ?)", domain, "%"+domain+"%").First(&account)
 	if result.Error != nil {
