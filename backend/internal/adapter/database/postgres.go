@@ -12,7 +12,6 @@ import (
 
 func NewPostgresConnection() (*gorm.DB, error) {
 	dsn := os.Getenv("DATABASE_URL")
-	// dsn = "host=localhost user=postgres password=password dbname=hercules port=5432 sslmode=disable"
 
 	config := &gorm.Config{
 		Logger: logger.Default.LogMode(logger.Info),
