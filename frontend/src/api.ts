@@ -5,13 +5,11 @@ const API_BASE_URL = 'http://localhost:8080/api';
 export async function fetchCases(): Promise<Case[]> {
     try {
         const token = localStorage.getItem('token');
-        console.log("Fetching cases from:", `${API_BASE_URL}/cases`);
         const response = await fetch(`${API_BASE_URL}/cases`, {
             headers: {
                 'Authorization': `Bearer ${token}`
             }
         });
-        console.log("Response status:", response.status);
 
         if (!response.ok) {
             const text = await response.text();
@@ -20,7 +18,6 @@ export async function fetchCases(): Promise<Case[]> {
         }
 
         const data: BackendCase[] = await response.json();
-        console.log("Raw API Data:", data);
 
         // Transform BackendCase (snake_case) to Case (camelCase)
         return data.map(transformCase);

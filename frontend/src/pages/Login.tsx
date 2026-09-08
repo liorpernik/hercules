@@ -24,8 +24,6 @@ const Login = () => {
             // Store token and user info
             localStorage.setItem("token", data.token);
             localStorage.setItem("user", JSON.stringify(data.user));
-
-            console.log("Logged in as:", data.user);
             navigate("/"); // Redirect to Entrance Page
         } catch (err) {
             console.error("Login error:", err);
@@ -44,7 +42,6 @@ const Login = () => {
                     <GoogleLogin
                         onSuccess={handleSuccess}
                         onError={() => {
-                            console.log("Login Failed");
                             alert("Google Login Failed");
                         }}
                         useOneTap
